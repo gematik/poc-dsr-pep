@@ -1,0 +1,134 @@
+= Device Secutity Rating Policy Enforcement Point
+
+DSR PEP is a component that enforces the security policies defined by the DSR PDP (Open Policy Engine). It is a HTTP server that listens for incoming requests and forwards them to the OPA for evaluation. The OPA returns the decision and the PEP enforces it. PEP performs the following tasks:
+
+* Verifies the device token
+* Verifies the device token binding
+* Creates OPA Policy Input from the request
+* Asks opa for the decision
+* Enforces the decision by returning either 200 or 403
+
+At the moment we support the link:https://nginx.org/en/docs/http/ngx_http_auth_request_module.html[NGINX authentication sub-requests]. In the future we plan to support other gateways as well.
+
+== Configuration
+
+The PEP is configured via the config file named `pep-config.yaml` located in the current working directory. Additionally we support /etc/pep/pep-config.yaml as a location, but the samples below use the workdir as default. When used in docker, the config file is expected to be mounted into the container at `/app/pep-config.yaml` or `/etc/pep/pep-config.yaml`.
+
+Some additional files must be provided as well, especially the OPA configuration file as well as all neccessary certificates and keys.
+
+[cols="m,"]
+|===
+| Key | Description 
+
+| address
+| Address where PEP Server will listen for incoming requests in `host:port` format. `host` can be omitted in order to listen on all interfaces.
+
+| device_verify_jwks_path
+| Path to the JWKS used for verifying the device token.
+
+| embedded_opa
+| Configuration for running OPA in embedded mode. 
+
+| embedded_opa.config_path
+| Path to the OPA configuration file. Used only when running OPA in embedded mode.
+
+| embedded_opa.simulation_config_path
+| Path to the OPA simulation configuration file. Used only when running OPA in embedded mode.
+
+| profiles
+| List of security profiles. See <<_security_profiles, Security Profiles>> for more information.
+
+|===
+
+For docker / docker compose compatible configuration, please refer to link:./e2e-tests/pep-config.yaml[pep-config.yaml].
+
+=== Security Profiles
+
+PEP supports configuration of multiple security profiles. Each profile defines the minimum security requirements for different parts of the application. In the security profile, you can configure the following:
+
+* `name` - name of the profile
+* `require_device_token` - if set to `true`, the device token is required for all requests. If set to `false`, the device token is not required and only the session token is used.
+* `device_token_binding_method` - method used for binding the device token to the client. Possible values are `x5t`, `jkt` and `none`. If `none` is used, the device token is not bound and is just a bearer token.
+* `session_token_binding_method` - method used for binding the session token to the client. Possible values are `x5t`, `jkt` and `none`. If `none` is used, the session token is not bound and is just a bearer token.
+
+=== Sample config file
+
+[source,yaml]
+----
+# This is the configuration file for the PEP.
+
+# Address where PEP Server will listen for incoming requests
+address: :8282
+device_verify_jwks_path: ./e2e-tests/secrets/device-verify-jwks.json
+# in case we run embedded opa, we use following config
+embedded_opa:
+  config_path: opa-config.yaml
+  simulation_config_path: opa-simulation-config.yaml
+
+# security profiles tune the minimum security requirements for different parts of the application
+profiles:
+  # strict profile requires zero trust device token and enforces token binding
+  - name: strict
+    # x5t, jkt, none
+    device_token_binding_method: x5t
+    require_device_token: true
+    session_token_binding_method: x5t 
+  # lax profile requires only session token
+  - name: lax
+    # x5t, jkt, none
+    device_token_binding_method: none
+    require_device_token: false
+    session_token_binding_method: none 
+----
+
+
+== Running local E2E tests
+
+.*Start docker compose containers*
+[source,bash]
+----
+cd e2e-tests
+docker-compose down --remove-orphans
+docker-compose up --build -d
+----
+
+Once all containers are up and running, you can run the tests:
+
+.*Run tests*
+[source,bash]
+----
+# will return 403 with error saying that X-Message header does not have expected value
+curl http://localhost:8080/api
+# let's give it the right value and receive 200
+curl -H "X-Message: Hello World" http://localhost:8080/api
+----
+
+== Running PEP locally in developer mode
+
+.*Start docker compose containers*
+[source,bash]
+----
+# fromn the project root directory
+# it will only start the sample OPA bundle server
+docker-compose down --remove-orphans
+docker-compose up --build -d
+----
+
+.*Start PEP server*
+[source,bash]
+----
+# from the project root directory
+go run ./cmd/dsr-pep server
+----
+
+Once the PEP server is running, you can test it:
+
+.*Run tests*
+[source,bash]
+----
+# will return 403 with error saying that X-Message header does not have expected value
+# please note the header X-Pdp-Decision. It is set by the PEP and contains the decision returned by the PDP
+curl -v http://localhost:8282/lax/auth_request/sample/verdict
+# Let's give it the right value and receive 200
+curl -v -H "X-Message: Hello World" http://localhost:8282/lax/auth_request/sample/verdict
+----

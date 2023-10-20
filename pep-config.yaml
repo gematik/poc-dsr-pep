@@ -1,0 +1,35 @@
+# This is the configuration file for the PEP.
+
+# Address where PEP Server will listen for incoming requests
+address: :8282
+device_verify_jwks_path: ./e2e-tests/secrets/device-verify-jwks.json
+# in case we run embedded opa, we use following config
+embedded_opa:
+  config_path: opa-config.yaml
+  simulation_config_path: opa-simulation-config.yaml
+# in case we run external opa, we use following config
+#opa:
+#  url: http://localhost:8181/
+
+# security profiles tune the minimum security requirements for different parts of the application
+profiles:
+  # strict profile requires zero trust device token and enforces token binding
+  - name: strict
+    # x5t, jkt, none
+    device_token_binding_method: x5t
+    require_device_token: true
+    session_token_binding_method: x5t 
+  # lax profile requires only session token
+  - name: lax
+    # x5t, jkt, none
+    device_token_binding_method: none
+    require_device_token: false
+    session_token_binding_method: none 
+
+# configuration for session management
+session:
+  # path to the private key used for signing the session token
+  sign_private_key_path: ./e2e-tests/secrets/session-sign-key1.pem
+  # path to the jwks used for verifying the session token
+  # may contain several public keys to support seamless key rotation
+  verify_jwks_path: ./e2e-tests/secrets/session-verify-jwks.json

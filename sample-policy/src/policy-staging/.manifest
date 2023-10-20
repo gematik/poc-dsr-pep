@@ -1,0 +1,9 @@
+{
+  "revision": "2023-09-24-staging",
+  "roots": [
+    "sample"
+  ],
+  "metadata": {
+    "application": "dsr-pep-e2e-tests"
+  }
+}
