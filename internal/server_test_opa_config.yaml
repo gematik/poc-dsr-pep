@@ -1,0 +1,8 @@
+services: 
+  test:
+    url: ${MOCK_BUNDLE_SERVICE_URL}
+bundles:
+  test:
+    resource: /bundles/sample-policy-bundle.tar.gz
+decision_logs:
+  console: true

@@ -1,0 +1,21 @@
+# Docker compose file for E2E testing
+version: "3"
+services:
+  opa-bundle-server:
+    build: ../sample-policy/
+
+  pep:
+    build: ..
+    volumes:
+      - ./pep-config.yaml:/app/pep-config.yaml
+      - ./opa-config.yaml:/app/opa-config.yaml
+      - ./opa-simulation-config.yaml:/app/opa-simulation-config.yaml
+      - ./secrets:/app/secrets
+
+  nginx:
+    image: nginx
+    ports:
+      - 8080:80
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+

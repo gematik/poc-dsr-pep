@@ -1,0 +1,14 @@
+services:
+  opa-bundle-server:
+    url:  http://opa-bundle-server/
+
+bundles:
+  sample-policy:
+    service: opa-bundle-server
+    resource: sample-policy-bundle-staging.tar.gz
+    persist: false
+    polling:
+      min_delay_seconds: 5
+      max_delay_seconds: 10
+decision_logs:
+  console: true

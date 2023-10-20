@@ -1,0 +1,8 @@
+# Docker compose file for development
+# starts the bundle server on port 8383
+version: "3"
+services:
+  opa-bundle-server:
+    build: ./sample-policy
+    ports:
+      - 8383:80

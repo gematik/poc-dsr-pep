@@ -1,0 +1,14 @@
+address: :80
+device_verify_jwks_path: ./secrets/device-verify-jwks.json
+embedded_opa:
+  config_path: opa-config.yaml
+  simulation_config_path: opa-simulation-config.yaml
+profiles:
+  - name: strict
+    device_token_binding_method: x5t
+    require_device_token: true
+    session_token_binding_method: x5t 
+  - name: lax
+    device_token_binding_method: none
+    require_device_token: false
+    session_token_binding_method: none 
