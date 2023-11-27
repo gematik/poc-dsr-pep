@@ -1,4 +1,4 @@
-= Device Secutity Rating Policy Enforcement Point
+= Device Security Rating Policy Enforcement Point
 
 DSR PEP is a component that enforces the security policies defined by the DSR PDP (Open Policy Engine). It is a HTTP server that listens for incoming requests and forwards them to the OPA for evaluation. The OPA returns the decision and the PEP enforces it. PEP performs the following tasks:
 
