@@ -1,5 +1,7 @@
 = Device Security Rating Policy Enforcement Point
 
+NOTE: This software is a proof of concept and is not intended for production use. It will not be maintained or receive updates. Concepts from this project will be used in gematik specifications to standardize Zero Trust in Telematics Infrastructure. Developers are encouraged to use the implementation ideas in their own software.
+
 DSR PEP is a component that enforces the security policies defined by the DSR PDP (Open Policy Engine). It is a HTTP server that listens for incoming requests and forwards them to the OPA for evaluation. The OPA returns the decision and the PEP enforces it. PEP performs the following tasks:
 
 * Verifies the device token
