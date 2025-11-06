@@ -1,3 +1,6 @@
+[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-no-red.svg)](https://bitbucket.org/lbesson/ansi-colors)
+
 = Device Security Rating Policy Enforcement Point
 
 NOTE: This software is a proof of concept and is not intended for production use. It will not be maintained or receive updates. Concepts from this project will be used in gematik specifications to standardize Zero Trust in Telematics Infrastructure. Developers are encouraged to use the implementation ideas in their own software.
