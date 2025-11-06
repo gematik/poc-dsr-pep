@@ -1,5 +1,6 @@
-[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
-[![Maintenance](https://img.shields.io/badge/Maintained%3F-no-red.svg)](https://bitbucket.org/lbesson/ansi-colors)
+image:http://unmaintained.tech/badge.svg[No Maintenance Intended,link=http://unmaintained.tech/]
+image:https://img.shields.io/badge/Maintained%3F-no-red.svg[Maintenance,link=https://bitbucket.org/lbesson/ansi-colors]
+image:https://img.shields.io/badge/License-Apache%202.0-blue.svg[License,link=https://opensource.org/licenses/Apache-2.0]
 
 = Device Security Rating Policy Enforcement Point
 
